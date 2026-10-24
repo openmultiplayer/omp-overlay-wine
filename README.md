@@ -9,7 +9,8 @@ is available, it calls the original function.
 
 Run the **Build Wine overlay DLL** workflow from the Actions tab to build a
 32-bit Windows DLL with MSVC. Download `omp-wine.dll` from that run's
-**Artifacts** section.
+**Artifacts** section. Check **Publish this build as a GitHub Release** if you
+want to keep it as a release asset.
 
 To build it locally, use an x86 Native Tools Command Prompt for Visual Studio:
 
