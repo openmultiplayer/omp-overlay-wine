@@ -1,0 +1,32 @@
+name: Build Wine overlay DLL
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build 32-bit Windows DLL
+    runs-on: windows-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+
+      - name: Build DLL
+        shell: cmd
+        run: |
+          for /f "usebackq tokens=*" %%i in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath`) do set "VSINSTALL=%%i"
+          if not defined VSINSTALL exit /b 1
+          call "%VSINSTALL%\VC\Auxiliary\Build\vcvarsall.bat" x86
+          if errorlevel 1 exit /b 1
+          cl /nologo /LD /MT /O2 /W3 /TC ompwine.c /link /OUT:omp-wine.dll gdi32.lib
+
+      - name: Upload DLL
+        uses: actions/upload-artifact@v7
+        with:
+          name: omp-wine.dll
+          path: omp-wine.dll
+          if-no-files-found: error
+          retention-days: 30
